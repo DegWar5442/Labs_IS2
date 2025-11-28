@@ -1,0 +1,336 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.example.org/vehicles.owl"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="http://www.example.org/heavy_vehicles.owl">
+    <Prefix name="" IRI="http://www.example.org/vehicles.owl#"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    
+    <Declaration><Class IRI="#Vehicle"/></Declaration>
+    <Declaration><Class IRI="#LandVehicle"/></Declaration>
+    <Declaration><Class IRI="#Watercraft"/></Declaration>
+    <Declaration><Class IRI="#Aircraft"/></Declaration>
+    <Declaration><Class IRI="#Spacecraft"/></Declaration>
+
+    <Declaration><Class IRI="#Car"/></Declaration>
+    <Declaration><Class IRI="#Truck"/></Declaration>
+    <Declaration><Class IRI="#Motorcycle"/></Declaration>
+    <Declaration><Class IRI="#Bicycle"/></Declaration>
+    
+    <Declaration><Class IRI="#Boat"/></Declaration>
+    <Declaration><Class IRI="#Ship"/></Declaration>
+    <Declaration><Class IRI="#Submarine"/></Declaration>
+    
+    <Declaration><Class IRI="#Airplane"/></Declaration>
+    <Declaration><Class IRI="#Helicopter"/></Declaration>
+    <Declaration><Class IRI="#Glider"/></Declaration>
+    
+    <Declaration><Class IRI="#VehiclePart"/></Declaration>
+    <Declaration><Class IRI="#Engine"/></Declaration>
+    <Declaration><Class IRI="#ElectricMotor"/></Declaration>
+    <Declaration><Class IRI="#CombustionEngine"/></Declaration>
+    <Declaration><Class IRI="#Wheel"/></Declaration>
+    <Declaration><Class IRI="#Wing"/></Declaration>
+    <Declaration><Class IRI="#Hull"/></Declaration>
+    <Declaration><Class IRI="#Propeller"/></Declaration>
+    <Declaration><Class IRI="#Cockpit"/></Declaration>
+    <Declaration><Class IRI="#Fuselage"/></Declaration>
+    <Declaration><Class IRI="#SteeringWheel"/></Declaration>
+    <Declaration><Class IRI="#Handlebar"/></Declaration>
+    <Declaration><Class IRI="#Brake"/></Declaration>
+    <Declaration><Class IRI="#Mast"/></Declaration>
+    <Declaration><Class IRI="#Keel"/></Declaration>
+
+    <Declaration><Class IRI="#Person"/></Declaration>
+    <Declaration><Class IRI="#Operator"/></Declaration>
+    <Declaration><Class IRI="#Driver"/></Declaration>
+    <Declaration><Class IRI="#Pilot"/></Declaration>
+    <Declaration><Class IRI="#Captain"/></Declaration>
+    <Declaration><Class IRI="#Passenger"/></Declaration>
+
+    <Declaration><Class IRI="#Infrastructure"/></Declaration>
+    <Declaration><Class IRI="#Road"/></Declaration>
+    <Declaration><Class IRI="#Highway"/></Declaration>
+    <Declaration><Class IRI="#Offroad"/></Declaration>
+    <Declaration><Class IRI="#WaterBody"/></Declaration>
+    <Declaration><Class IRI="#Ocean"/></Declaration>
+    <Declaration><Class IRI="#River"/></Declaration>
+    <Declaration><Class IRI="#Airspace"/></Declaration>
+    <Declaration><Class IRI="#Space"/></Declaration>
+
+    <Declaration><Class IRI="#Operation"/></Declaration>
+    <Declaration><Class IRI="#Drive"/></Declaration>
+    <Declaration><Class IRI="#Fly"/></Declaration>
+    <Declaration><Class IRI="#Sail"/></Declaration>
+    <Declaration><Class IRI="#Dive"/></Declaration>
+    <Declaration><Class IRI="#Orbit"/></Declaration>
+
+    <Declaration><ObjectProperty IRI="#operates"/></Declaration>
+    <Declaration><ObjectProperty IRI="#operated_by"/></Declaration>
+    <Declaration><ObjectProperty IRI="#hasPart"/></Declaration>
+    <Declaration><ObjectProperty IRI="#part_of"/></Declaration>
+    <Declaration><ObjectProperty IRI="#travels_on"/></Declaration>
+    <Declaration><ObjectProperty IRI="#performs"/></Declaration>
+
+    <Declaration><NamedIndividual IRI="#Tesla_Model_S"/></Declaration>
+    <Declaration><NamedIndividual IRI="#Titanic"/></Declaration>
+    <Declaration><NamedIndividual IRI="#Spirit_of_St_Louis"/></Declaration>
+<SubClassOf><Class IRI="#Offroad"/><Class IRI="#Infrastructure"/></SubClassOf>
+    <SubClassOf><Class IRI="#Space"/><Class IRI="#Infrastructure"/></SubClassOf>
+    <SubClassOf><Class IRI="#LandVehicle"/><Class IRI="#Vehicle"/></SubClassOf>
+    <SubClassOf><Class IRI="#Watercraft"/><Class IRI="#Vehicle"/></SubClassOf>
+    <SubClassOf><Class IRI="#Aircraft"/><Class IRI="#Vehicle"/></SubClassOf>
+    <SubClassOf><Class IRI="#Spacecraft"/><Class IRI="#Vehicle"/></SubClassOf>
+<SubClassOf><Class IRI="#Bicycle"/><Class IRI="#LandVehicle"/></SubClassOf>
+    <SubClassOf><Class IRI="#Truck"/><Class IRI="#LandVehicle"/></SubClassOf>
+    <SubClassOf><Class IRI="#Glider"/><Class IRI="#Aircraft"/></SubClassOf>
+    <SubClassOf><Class IRI="#Submarine"/><Class IRI="#Watercraft"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Passenger"/><Class IRI="#Person"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Fly"/><Class IRI="#Operation"/></SubClassOf>
+    <SubClassOf><Class IRI="#Drive"/><Class IRI="#Operation"/></SubClassOf>
+    <SubClassOf><Class IRI="#Dive"/><Class IRI="#Operation"/></SubClassOf>
+    <SubClassOf><Class IRI="#Sail"/><Class IRI="#Operation"/></SubClassOf>
+    <SubClassOf><Class IRI="#Orbit"/><Class IRI="#Operation"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Brake"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Fuselage"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Keel"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Mast"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Propeller"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Sail"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Engine"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#CombustionEngine"/><Class IRI="#Engine"/></SubClassOf>
+    <SubClassOf><Class IRI="#ElectricMotor"/><Class IRI="#Engine"/></SubClassOf>
+    <SubClassOf><Class IRI="#Wheel"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Wing"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Hull"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Cockpit"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#SteeringWheel"/><Class IRI="#VehiclePart"/></SubClassOf>
+    <SubClassOf><Class IRI="#Handlebar"/><Class IRI="#VehiclePart"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Operator"/><Class IRI="#Person"/></SubClassOf>
+    <SubClassOf><Class IRI="#Driver"/><Class IRI="#Operator"/></SubClassOf>
+    <SubClassOf><Class IRI="#Pilot"/><Class IRI="#Operator"/></SubClassOf>
+    <SubClassOf><Class IRI="#Captain"/><Class IRI="#Operator"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Highway"/><Class IRI="#Road"/></SubClassOf>
+    <SubClassOf><Class IRI="#Road"/><Class IRI="#Infrastructure"/></SubClassOf>
+    <SubClassOf><Class IRI="#Ocean"/><Class IRI="#WaterBody"/></SubClassOf>
+    <SubClassOf><Class IRI="#River"/><Class IRI="#WaterBody"/></SubClassOf>
+    <SubClassOf><Class IRI="#WaterBody"/><Class IRI="#Infrastructure"/></SubClassOf>
+    <SubClassOf><Class IRI="#Airspace"/><Class IRI="#Infrastructure"/></SubClassOf>
+
+    <SubClassOf><Class IRI="#Car"/><Class IRI="#LandVehicle"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wheel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#SteeringWheel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Brake"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Road"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Car"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Driver"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Motorcycle"/><Class IRI="#LandVehicle"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Motorcycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Motorcycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wheel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Motorcycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Handlebar"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Motorcycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Driver"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Airplane"/><Class IRI="#Aircraft"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wing"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Fuselage"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Cockpit"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Airspace"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Fly"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Airplane"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Pilot"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Helicopter"/><Class IRI="#Aircraft"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Helicopter"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Propeller"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Helicopter"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Cockpit"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Helicopter"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Fly"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Boat"/><Class IRI="#Watercraft"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Boat"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Hull"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Boat"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Keel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Boat"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#WaterBody"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Boat"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Sail"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Boat"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Captain"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Ship"/><Class IRI="#Watercraft"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Ship"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Hull"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Ship"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Ship"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Ocean"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Driver"/><Class IRI="#Operator"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Driver"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operates"/><Class IRI="#LandVehicle"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf><Class IRI="#Pilot"/><Class IRI="#Operator"/></SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pilot"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operates"/><Class IRI="#Aircraft"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <DisjointClasses>
+        <Class IRI="#LandVehicle"/>
+        <Class IRI="#Watercraft"/>
+        <Class IRI="#Aircraft"/>
+        <Class IRI="#Spacecraft"/>
+    </DisjointClasses>
+    
+    <DisjointClasses>
+        <Class IRI="#Car"/>
+        <Class IRI="#Motorcycle"/>
+        <Class IRI="#Truck"/>
+    </DisjointClasses>
+
+    <DisjointClasses>
+        <Class IRI="#Wheel"/>
+        <Class IRI="#Wing"/>
+        <Class IRI="#Hull"/>
+        <Class IRI="#Propeller"/>
+    </DisjointClasses>
+
+    <DisjointClasses>
+        <Class IRI="#Road"/>
+        <Class IRI="#WaterBody"/>
+        <Class IRI="#Airspace"/>
+        <Class IRI="#Space"/>
+    </DisjointClasses>
+
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#operates"/>
+        <ObjectProperty IRI="#performs"/>
+    </SubObjectPropertyOf>
+    
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasPart"/>
+        <ObjectProperty IRI="#part_of"/>
+    </InverseObjectProperties>
+    
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#operates"/>
+        <ObjectProperty IRI="#operated_by"/>
+    </InverseObjectProperties>
+    
+    <TransitiveObjectProperty>
+        <ObjectProperty IRI="#hasPart"/>
+    </TransitiveObjectProperty>
+    
+    <TransitiveObjectProperty>
+        <ObjectProperty IRI="#part_of"/>
+    </TransitiveObjectProperty>
+
+    <ClassAssertion>
+        <Class IRI="#Car"/>
+        <NamedIndividual IRI="#Tesla_Model_S"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#ElectricMotor"/></ObjectSomeValuesFrom>
+        <NamedIndividual IRI="#Tesla_Model_S"/>
+    </ClassAssertion>
+
+    <ClassAssertion>
+        <Class IRI="#Ship"/>
+        <NamedIndividual IRI="#Titanic"/>
+    </ClassAssertion>
+
+    <ClassAssertion>
+        <Class IRI="#Airplane"/>
+        <NamedIndividual IRI="#Spirit_of_St_Louis"/>
+    </ClassAssertion>
+</Ontology>
