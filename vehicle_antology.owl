@@ -5,7 +5,7 @@
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     ontologyIRI="http://www.example.org/heavy_vehicles.owl">
+     ontologyIRI="http://www.example.org/vehicles.owl">
     <Prefix name="" IRI="http://www.example.org/vehicles.owl#"/>
     <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
     <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
@@ -252,6 +252,92 @@
         <Class IRI="#Ship"/>
         <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Ocean"/></ObjectSomeValuesFrom>
     </SubClassOf>
+<SubClassOf>
+        <Class IRI="#Spacecraft"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Space"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Spacecraft"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Orbit"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Spacecraft"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Spacecraft"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Pilot"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf>
+        <Class IRI="#Submarine"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#WaterBody"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Submarine"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Dive"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Submarine"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Hull"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Submarine"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Submarine"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Captain"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf>
+        <Class IRI="#Glider"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Airspace"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Glider"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#performs"/><Class IRI="#Fly"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Glider"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wing"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Truck"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Road"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Truck"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Engine"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Truck"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wheel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Truck"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#operated_by"/><Class IRI="#Driver"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+    <SubClassOf>
+        <Class IRI="#Bicycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Road"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Bicycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#travels_on"/><Class IRI="#Offroad"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Bicycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Wheel"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Bicycle"/>
+        <ObjectSomeValuesFrom><ObjectProperty IRI="#hasPart"/><Class IRI="#Brake"/></ObjectSomeValuesFrom>
+    </SubClassOf>
+
+
+
 
     <SubClassOf><Class IRI="#Driver"/><Class IRI="#Operator"/></SubClassOf>
     <SubClassOf>
