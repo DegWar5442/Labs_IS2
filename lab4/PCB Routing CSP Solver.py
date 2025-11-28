@@ -1,8 +1,10 @@
 """
-PCB Routing CSP Solver (Auto-Retry Mode)
-----------------------------------------
-Логіка: Якщо рішення не знайдено, алгоритм змінює розташування перешкод 
-та контактів і пробує знову (до ліміту спроб).
+PCB Routing CSP Solver v2.0 (Smart & Laconic)
+---------------------------------------------
+Покращення:
+1. Мінімізація поворотів (шляхи стають прямими).
+2. Спрямований пошук (шляхи стають коротшими).
+
 """
 
 import matplotlib.pyplot as plt
@@ -10,19 +12,16 @@ import matplotlib.patches as mpatches
 import numpy as np
 from typing import List, Tuple, Dict, Set
 import random
-import time
 
-# Типи даних
 Point = Tuple[int, int]
 Path = List[Point]
 
 class PCBGrid:
-    """Представлення плати"""
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
         self.obstacles: Set[Point] = set()
-        self.terminals: Dict[int, Tuple[Point, Point]] = {} 
+        self.terminals: Dict[int, Tuple[Point, Point]] = {}
         self.colors: Dict[int, str] = {}
 
     def add_obstacle(self, x: int, y: int):
@@ -36,26 +35,45 @@ class PCBGrid:
         x, y = p
         return 0 <= x < self.width and 0 <= y < self.height and p not in self.obstacles
 
+# === НОВА ЛОГІКА: ОЦІНКА "КРАСИ" ШЛЯХУ ===
+
+def count_turns(path: Path) -> int:
+    """Рахує кількість поворотів у шляху. Менше = краще."""
+    if len(path) < 3:
+        return 0
+    turns = 0
+    # Перевіряємо трійки точок. Якщо вони не на одній лінії - це поворот.
+    for i in range(len(path) - 2):
+        p1 = path[i]
+        p2 = path[i+1]
+        p3 = path[i+2]
+        
+        # Вектори руху
+        v1 = (p2[0] - p1[0], p2[1] - p1[1])
+        v2 = (p3[0] - p2[0], p3[1] - p2[1])
+        
+        if v1 != v2:
+            turns += 1
+    return turns
+
 class PathGenerator:
-    """Генератор можливих маршрутів (Domain Generator)"""
+    """Розумний генератор маршрутів"""
     
     @staticmethod
-    def generate_candidate_paths(grid: PCBGrid, net_id: int, max_paths: int = 200) -> List[Path]:
+    def generate_candidate_paths(grid: PCBGrid, net_id: int, max_paths: int = 50) -> List[Path]:
         start, end = grid.terminals[net_id]
-        
-        # Евристика: Манхеттенська відстань + запас для маневрів
         manhattan_dist = abs(start[0] - end[0]) + abs(start[1] - end[1])
-        max_len = manhattan_dist + 14 
+        max_len = manhattan_dist + 10  # Невеликий запас, щоб не блукав
         
         paths = []
-        stack = [(start, [start])] 
+        stack = [(start, [start])]
         
         attempts = 0
-        MAX_ATTEMPTS = 5000 
+        MAX_ATTEMPTS = 1000
         
         while stack and len(paths) < max_paths and attempts < MAX_ATTEMPTS:
             attempts += 1
-            curr, path = stack.pop()
+            curr, path = stack.pop() # DFS
             
             if len(path) > max_len:
                 continue
@@ -64,8 +82,11 @@ class PathGenerator:
                 paths.append(path)
                 continue
             
+            # === ПОКРАЩЕННЯ 1: Спрямований рух ===
+            # Генеруємо сусідів
+            neighbors = []
             moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-            random.shuffle(moves)
+            random.shuffle(moves) # Все ще потрібен рандом для варіативності
             
             for dx, dy in moves:
                 nx, ny = curr[0] + dx, curr[1] + dy
@@ -73,21 +94,35 @@ class PathGenerator:
                 
                 if grid.is_valid(next_p) and next_p not in path:
                     # Перевірка на чужі піни
-                    is_terminal_of_other = False
+                    is_blocked = False
                     for other_id, (os, oe) in grid.terminals.items():
                         if other_id != net_id and (next_p == os or next_p == oe):
-                            is_terminal_of_other = True
+                            is_blocked = True
                             break
-                    
-                    if not is_terminal_of_other:
-                        stack.append((next_p, path + [next_p]))
+                    if not is_blocked:
+                        # Рахуємо відстань до цілі для цього сусіда
+                        dist_to_end = abs(nx - end[0]) + abs(ny - end[1])
+                        neighbors.append((dist_to_end, next_p))
+            
+            # Сортуємо сусідів: спочатку ті, що ближче до цілі (Greedy bias)
+            # Але іноді (20% випадків) перемішуємо, щоб знайти обхідні шляхи
+            neighbors.sort(key=lambda x: x[0], reverse=True) # Reverse, бо pop бере з кінця
+            
+            if random.random() < 0.2: 
+                random.shuffle(neighbors)
+
+            for _, next_p in neighbors:
+                stack.append((next_p, path + [next_p]))
                         
-        paths.sort(key=len)
-        return paths
+        # === ПОКРАЩЕННЯ 2: Сортування за "Лаконічністю" ===
+        # Критерій: Довжина + (Кількість поворотів * 2)
+        # Це змушує алгоритм обирати прямі лінії, навіть якщо вони трохи довші
+        paths.sort(key=lambda p: len(p) + count_turns(p) * 2)
+        
+        # Обрізаємо домен, залишаючи тільки найкращі (найпряміші) варіанти
+        return paths[:50] 
 
 class PCBSolver:
-    """CSP Solver"""
-    
     def __init__(self, grid: PCBGrid):
         self.grid = grid
         self.domains: Dict[int, List[Path]] = {} 
@@ -95,147 +130,131 @@ class PCBSolver:
         self.stats_nodes = 0
 
     def prepare_domains(self):
-        # Тихий режим (без принтів), щоб не засмічувати консоль при переборі
         for net_id in self.grid.terminals:
             paths = PathGenerator.generate_candidate_paths(self.grid, net_id)
-            if not paths:
-                return False
+            if not paths: return False
             self.domains[net_id] = paths
         return True
 
     def solve(self) -> bool:
-        if not self.prepare_domains():
-            return False
+        if not self.prepare_domains(): return False
         return self._backtrack()
 
     def _backtrack(self) -> bool:
         self.stats_nodes += 1
-        
-        if len(self.assignment) == len(self.grid.terminals):
-            return True
+        if len(self.assignment) == len(self.grid.terminals): return True
 
-        # MRV
+        # MRV Heuristic
         unassigned = [nid for nid in self.grid.terminals if nid not in self.assignment]
         var = min(unassigned, key=lambda nid: len(self.domains[nid]))
         
         for path in self.domains[var]:
             if self._is_consistent(path):
                 self.assignment[var] = path
-                
-                if self._backtrack():
-                    return True
-                
+                if self._backtrack(): return True
                 del self.assignment[var]
-        
         return False
 
     def _is_consistent(self, new_path: Path) -> bool:
         new_path_set = set(new_path)
         for assigned_path in self.assignment.values():
-            if not new_path_set.isdisjoint(assigned_path):
-                return False
+            if not new_path_set.isdisjoint(assigned_path): return False
         return True
+
+# === VIZUALIZATION (Canvas Style) ===
 
 class PCBVisualizer:
     @staticmethod
-    def draw(grid: PCBGrid, solution: Dict[int, Path] = None, attempt_num: int = 1):
-        fig, ax = plt.subplots(figsize=(9, 9))
+    def draw(grid: PCBGrid, solution: Dict[int, Path] = None):
+        fig, ax = plt.subplots(figsize=(10, 10))
         
+        # Темний фон "Blueprint"
+        ax.set_facecolor('#1e1e24') 
+        
+        # Тонка сітка
         ax.set_xlim(-0.5, grid.width - 0.5)
         ax.set_ylim(-0.5, grid.height - 0.5)
         ax.set_xticks(np.arange(grid.width))
         ax.set_yticks(np.arange(grid.height))
-        ax.grid(True, color='gray', linestyle=':', alpha=0.3)
-        ax.set_facecolor('#212121') 
+        ax.grid(True, color='#333333', linestyle='-', linewidth=0.5)
         
-        # Перешкоди
+        # Перешкоди (штриховка)
         for ox, oy in grid.obstacles:
-            rect = mpatches.Rectangle((ox - 0.5, oy - 0.5), 1, 1, color='#555555', ec='black')
+            rect = mpatches.Rectangle((ox - 0.5, oy - 0.5), 1, 1, 
+                                    facecolor='#2a2a2a', edgecolor='#444444', hatch='///')
             ax.add_patch(rect)
             
-        # Піни та Дроти
+        # Дроти
         for net_id, (start, end) in grid.terminals.items():
             color = grid.colors[net_id]
             
-            # Піни
-            ax.add_patch(plt.Circle(start, 0.35, color=color, ec='white', lw=1.5, zorder=10))
-            ax.add_patch(plt.Circle(end, 0.35, color=color, ec='white', lw=1.5, zorder=10))
+            # Піни (Contacts) - з білим обідком
+            for p in [start, end]:
+                ax.add_patch(plt.Circle(p, 0.3, color=color, ec='white', lw=2, zorder=10))
             
             # Підписи
-            ax.text(start[0], start[1], str(net_id), color='white', ha='center', va='center', fontweight='bold', zorder=11, fontsize=8)
-            ax.text(end[0], end[1], str(net_id), color='white', ha='center', va='center', fontweight='bold', zorder=11, fontsize=8)
+            ax.text(start[0], start[1], str(net_id), color='white', ha='center', va='center', fontweight='bold', zorder=11, fontsize=9)
+            ax.text(end[0], end[1], str(net_id), color='white', ha='center', va='center', fontweight='bold', zorder=11, fontsize=9)
             
-            # Дроти
             if solution and net_id in solution:
                 path = solution[net_id]
                 xs = [p[0] for p in path]
                 ys = [p[1] for p in path]
                 
-                ax.plot(xs, ys, color=color, linewidth=7, alpha=0.3, zorder=5, solid_capstyle='round')
-                ax.plot(xs, ys, color=color, linewidth=2, alpha=0.9, zorder=6, solid_capstyle='round')
+                # Основна лінія (більш "лаконічна", без прозорості)
+                ax.plot(xs, ys, color=color, linewidth=4, alpha=1.0, zorder=5, 
+                        solid_capstyle='round', solid_joinstyle='round')
+                
+                # Тонка біла лінія всередині (ефект дроту)
+                ax.plot(xs, ys, color='white', linewidth=1, alpha=0.3, zorder=6)
 
-        status = "SOLVED" if solution else "FAILED"
-        title = f"PCB Routing CSP | Attempt #{attempt_num}\nStatus: {status} | Grid: {grid.width}x{grid.height}"
-        plt.title(title, color='white', fontsize=14, pad=15)
-        
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-        ax.tick_params(colors='gray', labelsize=8)
+        # Прибираємо осі
+        for spine in ax.spines.values(): spine.set_visible(False)
+        ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
         
         plt.tight_layout()
         plt.show()
 
-# ==========================================
-# Логіка автоматичної генерації та повтору
-# ==========================================
+# === GENERATOR ===
 
 def generate_random_layout(width: int, height: int, n_obstacles: int, n_nets: int) -> PCBGrid:
-    """Генерує РОЗУМНУ розкладку плати з перевіркою зв'язності"""
+    """Генерує складну розкладку з перешкодами в ЦЕНТРІ"""
     grid = PCBGrid(width, height)
     used_positions = set()
 
-    # 1. Розміщуємо перешкоди НЕ в центрі (залишаємо простір для трас)
-    border_zone = max(1, width // 6)
-    obstacle_zones = [
-        (random.randint(0, border_zone), random.randint(0, height - 1)),
-        (random.randint(width - border_zone, width - 1), random.randint(0, height - 1))
-    ]
-    
+    # 1. Генерація перешкод (Тепер суворо всередині поля!)
+    # Ми беремо діапазон від 1 до width-2, щоб не ставити перешкоди на самій рамці
     while len(grid.obstacles) < n_obstacles:
-        rx = random.randint(0, width - 1)
-        ry = random.randint(0, height - 1)
+        rx = random.randint(1, width - 2)
+        ry = random.randint(1, height - 2)
         
-        # Уникаємо центральної зони
-        is_center = (width//4 < rx < 3*width//4 and height//4 < ry < 3*height//4)
-        
-        if (rx, ry) not in used_positions and not is_center:
+        if (rx, ry) not in used_positions:
             grid.add_obstacle(rx, ry)
             used_positions.add((rx, ry))
 
-    # 2. Генерація мереж з ГАРАНТОВАНОЮ відстанню між пінами
-    colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c']
+    # 2. Генерація мереж
+    colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#a55eea', '#ffffff']
     
     for i in range(n_nets):
-        max_tries = 500
+        max_tries = 1000
         for _ in range(max_tries):
-            # Генеруємо старт
-            sx = random.randint(1, width - 2)
-            sy = random.randint(1, height - 2)
+            # Старт і фініш теж намагаємось розкидати по всьому полю
+            sx = random.randint(0, width - 1)
+            sy = random.randint(0, height - 1)
             
-            if (sx, sy) in used_positions:
-                continue
+            if (sx, sy) in used_positions: continue
+
+            # Шукаємо кінець на відстані
+            dist = random.randint(4, width) # Мінімальна довжина дроту
+            angle = random.choice([0, 90, 180, 270]) # Тільки прямі кути для генерації
+            # Додаємо трохи випадкового зміщення
+            ex = sx + random.randint(-dist, dist)
+            ey = sy + random.randint(-dist, dist)
             
-            # Генеруємо кінець на достатній відстані (4-8 кроків)
-            distance = random.randint(4, min(8, width - 2))
-            angle = random.choice([0, 45, 90, 135, 180, 225, 270, 315])
-            
-            ex = sx + int(distance * np.cos(np.radians(angle)))
-            ey = sy + int(distance * np.sin(np.radians(angle)))
-            
-            # Перевірка валідності
+            # Перевіряємо, чи точка валідна
             if (0 <= ex < width and 0 <= ey < height and 
-                (ex, ey) not in used_positions and
-                abs(sx-ex) + abs(sy-ey) >= 3):
+                (ex, ey) not in used_positions and 
+                abs(sx-ex) + abs(sy-ey) > 4): # Дріт має бути довгим
                 
                 used_positions.add((sx, sy))
                 used_positions.add((ex, ey))
@@ -243,43 +262,30 @@ def generate_random_layout(width: int, height: int, n_obstacles: int, n_nets: in
                 color = colors[i % len(colors)]
                 grid.add_net(i + 1, (sx, sy), (ex, ey), color)
                 break
-        
+                
     return grid
+
 def main():
-    # === НАЛАШТУВАННЯ ДЛЯ ГАРАНТОВАНОГО УСПІХУ ===
-    BOARD_SIZE = 12       # Збільшили поле (було 10)
-    N_OBSTACLES = 4       # Зменшили перешкоди (було 6)
-    N_NETS = 4            # Зменшили кількість дротів (було 5)
-    MAX_ATTEMPTS = 100    # Дали ще більше спроб
-
-    print("="*50)
-    print("      AUTO-ADAPTIVE PCB ROUTER (BALANCED)      ")
-    print("="*50)
-    print(f"Ціль: Знайти рішення для {N_NETS} з'єднань на полі {BOARD_SIZE}x{BOARD_SIZE}")
-    print(f"Складність: Середня (Balanced)")
-    print("-" * 50)
-
-    for attempt in range(1, MAX_ATTEMPTS + 1):
-        # 1. Генеруємо нову розкладку
-        print(f"\r[Спроба {attempt}/{MAX_ATTEMPTS}] Генеруємо нову розкладку та шукаємо шлях...", end="")
-        
-        # Генеруємо нові позиції
+    # Налаштування для "Цікавої" гри
+    BOARD_SIZE = 12
+    N_OBSTACLES = 8       # Більше перешкод (було 4)
+    N_NETS = 5            # 5 дротів
+    
+    print("Шукаємо рішення з перешкодами по центру...")
+    
+    # Даємо більше спроб, бо тепер згенерувати валідну плату важче
+    for i in range(200):
         grid = generate_random_layout(BOARD_SIZE, BOARD_SIZE, N_OBSTACLES, N_NETS)
-        
-        # 2. Пробуємо вирішити
         solver = PCBSolver(grid)
-        success = solver.solve()
         
-        if success:
-            print(f"\n\n[+] УСПІХ! Знайдено валідне рішення на спробі №{attempt}")
-            print(f"    Вузлів перевірено: {solver.stats_nodes}")
-            
-            # Візуалізуємо успішний результат
-            PCBVisualizer.draw(grid, solver.assignment, attempt)
-            return # Вихід з програми після успіху
-        
-    # Якщо цикл закінчився без успіху
-    print(f"\n\n[-] НЕВДАЧА. Вичерпано ліміт у {MAX_ATTEMPTS} спроб.")
+        # Використовуємо solver
+        if solver.solve():
+            print(f"Знайдено! Спроба #{i+1}")
+            print(f"Статистика: {solver.stats_nodes} вузлів")
+            PCBVisualizer.draw(grid, solver.assignment)
+            break
+    else:
+        print("Не знайдено складного рішення. Спробуйте ще раз.")
 
 if __name__ == "__main__":
     main()
