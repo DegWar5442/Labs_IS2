@@ -70,8 +70,4 @@ def main():
 * PCBSolver: "Мозок" програми. Реалізує логіку CSP та Backtracking.  
 * PCBVisualizer: Відповідає за графічний вивід результату через Matplotlib.
 
-## **🤝 Автор**
 
-Розроблено як демонстрацію алгоритмів CSP та Symbolic AI.
-
-*Ліцензія: MIT*
