@@ -63,7 +63,7 @@ class PathGenerator:
     def generate_candidate_paths(grid: PCBGrid, net_id: int, max_paths: int = 50) -> List[Path]:
         start, end = grid.terminals[net_id]
         manhattan_dist = abs(start[0] - end[0]) + abs(start[1] - end[1])
-        max_len = manhattan_dist + 10  # Невеликий запас, щоб не блукав
+        max_len = manhattan_dist + 10  
         
         paths = []
         stack = [(start, [start])]
@@ -86,7 +86,7 @@ class PathGenerator:
             # Генеруємо сусідів
             neighbors = []
             moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-            random.shuffle(moves) # Все ще потрібен рандом для варіативності
+            random.shuffle(moves) 
             
             for dx, dy in moves:
                 nx, ny = curr[0] + dx, curr[1] + dy
@@ -114,9 +114,7 @@ class PathGenerator:
             for _, next_p in neighbors:
                 stack.append((next_p, path + [next_p]))
                         
-        # === ПОКРАЩЕННЯ 2: Сортування за "Лаконічністю" ===
-        # Критерій: Довжина + (Кількість поворотів * 2)
-        # Це змушує алгоритм обирати прямі лінії, навіть якщо вони трохи довші
+    
         paths.sort(key=lambda p: len(p) + count_turns(p) * 2)
         
         # Обрізаємо домен, залишаючи тільки найкращі (найпряміші) варіанти
@@ -188,7 +186,7 @@ class PCBVisualizer:
         for net_id, (start, end) in grid.terminals.items():
             color = grid.colors[net_id]
             
-            # Піни (Contacts) - з білим обідком
+            # Піни (Contacts) 
             for p in [start, end]:
                 ax.add_patch(plt.Circle(p, 0.3, color=color, ec='white', lw=2, zorder=10))
             
@@ -201,11 +199,11 @@ class PCBVisualizer:
                 xs = [p[0] for p in path]
                 ys = [p[1] for p in path]
                 
-                # Основна лінія (більш "лаконічна", без прозорості)
+                # Основна лінія 
                 ax.plot(xs, ys, color=color, linewidth=4, alpha=1.0, zorder=5, 
                         solid_capstyle='round', solid_joinstyle='round')
                 
-                # Тонка біла лінія всередині (ефект дроту)
+                # Тонка біла лінія всередині 
                 ax.plot(xs, ys, color='white', linewidth=1, alpha=0.3, zorder=6)
 
         # Прибираємо осі
@@ -222,7 +220,7 @@ def generate_random_layout(width: int, height: int, n_obstacles: int, n_nets: in
     grid = PCBGrid(width, height)
     used_positions = set()
 
-    # 1. Генерація перешкод (Тепер суворо всередині поля!)
+    # 1. Генерація перешкод 
     # Ми беремо діапазон від 1 до width-2, щоб не ставити перешкоди на самій рамці
     while len(grid.obstacles) < n_obstacles:
         rx = random.randint(1, width - 2)
@@ -247,14 +245,14 @@ def generate_random_layout(width: int, height: int, n_obstacles: int, n_nets: in
             # Шукаємо кінець на відстані
             dist = random.randint(4, width) # Мінімальна довжина дроту
             angle = random.choice([0, 90, 180, 270]) # Тільки прямі кути для генерації
-            # Додаємо трохи випадкового зміщення
+            #  випадкове зміщення
             ex = sx + random.randint(-dist, dist)
             ey = sy + random.randint(-dist, dist)
             
             # Перевіряємо, чи точка валідна
             if (0 <= ex < width and 0 <= ey < height and 
                 (ex, ey) not in used_positions and 
-                abs(sx-ex) + abs(sy-ey) > 4): # Дріт має бути довгим
+                abs(sx-ex) + abs(sy-ey) > 4):
                 
                 used_positions.add((sx, sy))
                 used_positions.add((ex, ey))
@@ -266,14 +264,14 @@ def generate_random_layout(width: int, height: int, n_obstacles: int, n_nets: in
     return grid
 
 def main():
-    # Налаштування для "Цікавої" гри
+  
     BOARD_SIZE = 12
-    N_OBSTACLES = 8       # Більше перешкод (було 4)
+    N_OBSTACLES = 8       # перешкод 
     N_NETS = 5            # 5 дротів
     
     print("Шукаємо рішення з перешкодами по центру...")
     
-    # Даємо більше спроб, бо тепер згенерувати валідну плату важче
+
     for i in range(200):
         grid = generate_random_layout(BOARD_SIZE, BOARD_SIZE, N_OBSTACLES, N_NETS)
         solver = PCBSolver(grid)
