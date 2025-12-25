@@ -67,6 +67,3 @@ The algorithm will run for 200 generations (configurable) and display the final 
 ├── mobile\_towers\_ga.py    \# Main source code containing the GA logic and visualization  
 └── README.md              \# Project documentation
 
-## **📝 License**
-
-This project is open-source and available for educational purposes.

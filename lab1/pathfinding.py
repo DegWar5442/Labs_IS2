@@ -1,6 +1,6 @@
 # pathfinding.py
 import networkx as nx
-from heuristics import heuristic_manhattan, heuristic_euclidean
+from heuristics import heuristic_manhattan
 
 def maze_to_graph(maze):
     G = nx.Graph()
